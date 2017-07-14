@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Focus carousel</title>
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
+
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            border: none;
+            -webkit-box-sizing: content-box;
+            -moz-box-sizing: content-box;
+            box-sizing: content-box;
+            /*解决bootstrap环境下img图片偏移*/
+        }
+
+
+        ul,ol,li{
+            list-style-type: none;
+        }
+
+        body{
+            margin: 50px 400px;
+        }
+
+        .wrap{
+            width: 400px;
+            height: 400px;
+            border: 2px solid #262626;
+            position: relative;
+            overflow: hidden;
+        }
+        .wrap ul li{
+            float: left;
+            width: 400px;
+            height: 400px;
+        }
+        .wrap ul{
+            width: 1600px;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        .wrap ol{
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+        }
+        .wrap ol li{
+            float: left;
+            width: 18px;
+            height: 18px;
+            border: 1px solid #d4d4d4;
+            line-height: 18px;
+            text-align: center;
+            margin: 0 5px;
+            background-color: #da1f21;/* IE6和部分IE7内核的浏览器(如QQ浏览器)下颜色被覆盖 */
+            background-color:rgba(255,255,255,0.3); /* IE6和部分IE7内核的浏览器(如QQ浏览器)会读懂，但解析为透明 */
+            border-radius: 50%;
+            cursor: pointer;
+            font-family: "Times New Roman"
+        }
+
+        .wrap ol li.current{
+            background: #60DBFC;
+        }
+
+
+    </style>
+    <script src="js/jquery.min.1.9.1.js"></script>
+    <script>
+/*
+        $(function (){
+
+            var PositionUl = $('.wrap ul');
+            var NumLi = $('.wrap ol li');
+            var liWidth = $('.wrap ul li').eq(0).width();
+            //console.log(liWidth)
+            var _now = 0;
+            var timeId = null;
+            function slider (){
+                if (_now == NumLi.size()-1){
+                    _now = 0;
+                }else{
+                    _now ++;
+                }
+
+                NumLi.eq(_now).addClass('current').siblings().removeClass();
+                PositionUl.animate({'left':-liWidth*_now},300);
+            }
+
+            NumLi.click(function (){
+                //var This = $(this);
+                var Index = $(this).index();
+                _now = Index;
+                $(this).addClass('current').siblings().removeClass();
+                PositionUl.animate({'left':-liWidth*Index},300);
+            });
+
+            timeId = setInterval(slider,1100);
+
+
+            $('.wrap').mouseover(function (){
+                clearInterval(timeId);
+            });
+
+            $('.wrap').mouseout(function (){
+                timeId = setInterval(slider,1100);
+
+            });
+
+
+
+
+
+
+        });
+*/
+
+
+        $(function (){
+            var Moving = $('.wrap ul');    // 图片内容的容器
+            var movingLi = $('.wrap ul li');    // 获取ul容器中其中一个li元素
+            var numberLi = $('.wrap ol li');    // 操作点击的数字元素
+            var liWidth = $('.wrap ul li').eq(0).width();    // 获取第一个具有图片内容的li宽度
+
+            var stopMoving = $('.wrap');    // 大容器
+
+            var timeId;    // 空的定时器.
+
+            // 坐标 起始索引值 = 0的控制数字样式计数器
+            var movingNow = 0;
+            // 坐标 起始索引值 = 0的控制数字样式计数器
+            var movingNew = 0;
+
+/*
+           /!*
+            * 第一部分: 点击数字元素操作 删除/添加 样式or 修改图片偏移位置
+            *!/
+            numberLi.click(function (){
+                // 索引
+                var _index = $(this).index();
+
+                // 使计数器的索引值与_index索引值同步.
+                movingNow = _index;
+                movingNew = _index;
+                // 为当前数字li元素点击时添加样式并相邻元素删除同样式
+                $(this).addClass('current').siblings().removeClass('current');
+                // 操作数字样式li添加类样式的同时修改ul内容移动位置
+                    // 关键: 设置索引值
+                Moving.animate({'left': -liWidth * _index},500);
+            });
+*/
+
+/*
+            /!*
+             * 第二部分: 操作图片自动移动位置, 设置图片无缝滚动
+             *!/
+            function slider(){
+                // 判断计数器的索引值是否 == 所有li的长度-1(最后一个li)
+                if (movingNow == numberLi.length - 1){
+
+                        // 执行修改第一个li的position位置
+                    movingLi.eq(0).css({
+                       'position': 'relative',
+                        'left': Moving.width()
+                    });
+
+                    // 并且索引的定位值重新 = 0;
+                    movingNow = 0;
+                }else{
+                    // 否则: 索引的坐标值递增. 直到递增到索引值3的时候执行上部分代码.
+                    movingNow ++;
+                }
+                movingNew++;
+                // 思维: eq()遍历numberLi元素来自动(setInterval)为其操作添加/删除样式.
+                // eq(需要一个起点并且自动叠加. 调用 ` 坐标0 = `1; 但是这个坐标本身是0,不具备自动叠加)
+                numberLi.eq(movingNow).addClass('current').siblings().removeClass();
+                // 与数字按钮numberLi索引的图片内容.
+                // 因为上方修改索引坐标值的时候修改了li第一个图片内容的位置, 所以这时候的movingNow == 0.没有内容
+                Moving.animate({'left': -liWidth * movingNew},500,function (){
+                    // 在自定义动画中,若要为一个执行完毕的动画添加新的样式,需要使用回调函数的方式
+                        // 判断图片滚动到最后一个时
+                    if(movingNew == 4){
+                        // 清除第一个图片内容的原本的定位属性
+                        movingLi.eq(0).css('position','static');
+                        // 让ul的位置回到初始
+                        Moving.css('left',0);
+                        // 并且让计数器索引值初始
+                        movingNew = 0;
+                    }
+                });
+            }
+*/
+
+
+
+/*
+            // 自动轮播.
+             timeId = setInterval(slider,1600);
+
+            // 鼠标移入停止动画
+            stopMoving.mouseover(function (){
+                clearInterval(timeId);
+            }).mouseout(function (){
+                timeId = setInterval(slider,1600);
+            });
+*/
+            /*
+            * 第一部分: 点击数字元素操作 删除/添加 样式or 修改图片偏移位置
+            */
+            numberLi.click(function (){
+                var _index = $(this).index();
+                /* 计数器的索引值与索引同步 */
+                movingNew = _index;
+                movingNow = _index;
+
+                $(this).addClass('current').siblings().removeClass();
+                Moving.animate({'left': -liWidth * _index},500);
+            });
+
+            /*
+             * 第二部分: 操作图片自动移动位置, 设置图片无缝滚动
+             */
+            function slider(){
+                    // 判断当数字读取到最后一个的时候
+                if (movingNow == numberLi.length - 1){
+                    // 无缝轮播操作
+                        // 修改第一个li属性为相对定位
+                    movingLi.eq(0).css({
+                        'position': 'relative',
+                        // 并移动到ul的宽度位置(也就是最后一个图片后面)
+                        'left': Moving.width()
+                    });
+                    // 索引值恢复初始状态(0)
+                    movingNow = 0;
+                }else{
+                    // 初始值递增
+                        /* 执行无缝操作时,当前计数器索引值0的位置已经没有内容 */
+                    movingNow ++;
+                }
+                    /* 单独设定一个新的计数器 */
+                    movingNew ++;
+                // eq(movingNow)在上面一开始设定了自增.
+                numberLi.eq(movingNow).addClass('current').siblings().removeClass();
+                // 原本是-liWidth * movingNow 但是执行无缝操作的时候 MovingNow = 0时无内容.
+                    // 改调用新的计数器 movingNew
+                        // 当需要在自定义动画执行完毕后添加新的样式,要用回调函数的方法
+                Moving.animate({'left': -liWidth * movingNew},500,function (){
+                    // 判断计数器索引值的位置
+                    if (movingNew == 4){
+                        // 清除第一个具有图片内容li的相对定位
+                        movingLi.eq(0).css('position','static');
+                        // 使ul的位置回到初始
+                        Moving.css('left',0);
+                        // 将计数器的索引值归零
+                        movingNew = 0;
+                    }
+                });
+            }
+
+            // 自动轮播
+            timeId = setInterval(slider,1000);
+
+            // 鼠标移入移出分别执行/删除定时动画
+            stopMoving.mouseover(function (){
+                clearInterval(timeId);
+            }).mouseout(function (){
+                timeId = setInterval(slider,1000);
+            });
+        });
+    </script>
+</head>
+<body>
+    <!--.wrap>(ul>li*4>img[src=$.jpg])+ol>li*4-->
+    <div class="wrap">
+        <ul>
+            <li><img src="./images/CAT-0.jpg" alt=""></li>
+            <li><img src="./images/CAT-1.jpg" alt=""></li>
+            <li><img src="./images/CAT-2.jpg" alt=""></li>
+            <li><img src="./images/CAT-3.jpg" alt=""></li>
+        </ul>
+        <ol class="">
+            <li class="current">1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+        </ol>
+    </div>
+</body>
+</html>
